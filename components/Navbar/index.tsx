@@ -16,7 +16,9 @@ const Navbar: NextPage = () => {
     setIsShowLogin(true);
   };
 
-  const handleClose = () => {};
+  const handleClose = () => {
+    setIsShowLogin(false)
+  };
 
   return (
     <div className={styles.navbar}>
@@ -36,7 +38,7 @@ const Navbar: NextPage = () => {
           登录
         </Button>
       </section>
-      <Login isShow={isShowLogin} onCLose={handleClose} />
+      <Login isShow={isShowLogin} onClose={handleClose} />
     </div>
   );
 };
