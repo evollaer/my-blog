@@ -1,6 +1,7 @@
 import styles from './index.module.scss';
 import { ChangeEvent, useState } from 'react';
 import request from 'service/fetch';
+import { useStore } from 'store/index';
 import CountDown from '../CountDown/index';
 import { message } from 'antd';
 interface IProps {
@@ -9,6 +10,10 @@ interface IProps {
 }
 
 const Login = (props: IProps) => {
+  const store = useStore();
+
+  console.log(store, 'store');
+
   const { isShow, onClose } = props;
 
   const [idShowVerifyCode, setIsShowVerifyCode] = useState(false);
@@ -32,21 +37,44 @@ const Login = (props: IProps) => {
   const handleGetVerifyCode = () => {
     if (!form?.phone) {
       message.warning('请输入手机号!');
-      return
+      return;
     }
-    setIsShowVerifyCode(true);
 
-    request.post('/api/user/sendVerifyCode').then(res=>{
-      console.log(res);
-      
-    })
+    request
+      .post('/api/user/sendVerifyCode', {
+        to: form?.phone,
+        templateId: 1,
+      })
+      .then((res: any) => {
+        if (res?.code == 0) {
+          console.log(res);
+          setIsShowVerifyCode(true);
+        } else {
+          message.error(res?.msg || '未知错误');
+        }
+      });
   };
 
   const handleLogin = () => {
     console.log(form);
+    request
+      .post('/api/user/login', {
+        ...form,
+        identity_type: 'phone',
+      })
+      .then((res: any) => {
+        if (res?.code === 0) {
+          //登录成功
+          store.user.setUserInfo(res?.data);
+          onClose && onClose();
+          message.success('登录成功！');
+        } else {
+          message.error(res?.msg || '未知错误');
+        }
+      });
   };
 
-  const handleOAuthLogin = () => {};
+  const handleOAuthLogin = () => { };
 
   const handleCountDownEnd = () => {
     setIsShowVerifyCode(false);
