@@ -1,7 +1,9 @@
-import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { withIronSessionApiRoute } from 'iron-session/next';
+import { Cookie } from 'next-cookie'
 import { ironOptions } from 'config/index';
 import { ISession } from 'pages/api/index';
+import { setCookie } from 'utils/index';
 import { prepareConnection } from 'db/index'
 import { User, UserAuth } from 'db/entity/index'
 import { message } from 'antd';
@@ -13,6 +15,7 @@ export default withIronSessionApiRoute(login, ironOptions);
 async function login(req: NextApiRequest, res: NextApiResponse) {
     console.log(req.body);
     const session: ISession = req.session
+    const cookies = Cookie.fromApiRoute(req, res)
     const { phone = '', verify = '', identity_type = 'phone' } = req.body;
     console.log('222', phone, verify);
 
@@ -46,6 +49,9 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
             session.nickname = nickname;
             session.avatar = avatar;
             await session.save()
+
+            setCookie(cookies, { userId: id, nickname, avatar })
+
             res?.status(200).json({
                 code: 0,
                 msg: '登录成功',
@@ -78,7 +84,10 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
             session.userId = id;
             session.nickname = nickname;
             session.avatar = avatar;
+
             await session.save()
+
+            setCookie(cookies, { userId: id, nickname, avatar })
             message.error('登录成功！')
 
             res?.status(200).json({
@@ -90,11 +99,11 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
                     avatar
                 }
             })
-            
+
         }
     } else {
         console.log('验证码错误');
-        
+
         res?.status(200).json({
             code: -1,
             msg: '验证码错误！',
@@ -104,7 +113,7 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
 
     // res?.status(200).json({
     //     phone, verify, code: 0,
-        
+
     // })
 
 }

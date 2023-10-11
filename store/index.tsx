@@ -7,7 +7,7 @@ interface IProps {
     children: ReactElement;
 }
 
-enableStaticRendering(true);
+enableStaticRendering(!process.browser);//此处设置为true，store的数据不会变成响应式
 
 const StoreContext = createContext({});
 

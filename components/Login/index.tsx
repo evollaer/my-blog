@@ -1,6 +1,7 @@
 import styles from './index.module.scss';
 import { ChangeEvent, useState } from 'react';
 import request from 'service/fetch';
+import { observer } from 'mobx-react-lite';
 import { useStore } from 'store/index';
 import CountDown from '../CountDown/index';
 import { message } from 'antd';
@@ -74,7 +75,10 @@ const Login = (props: IProps) => {
       });
   };
 
-  const handleOAuthLogin = () => { };
+  const handleOAuthLoginByGithub = () => {
+    //client ID：7187451ed8ddaa3cf0ec
+    //client-secret：5bf791f4bad2636c25275c8cba6f664197be15df
+  };
 
   const handleCountDownEnd = () => {
     setIsShowVerifyCode(false);
@@ -99,7 +103,7 @@ const Login = (props: IProps) => {
         <div className={styles.loginBtn} onClick={handleLogin}>
           登录
         </div>
-        <div className={styles.othersLogin} onClick={handleOAuthLogin}>
+        <div className={styles.othersLogin} onClick={handleOAuthLoginByGithub}>
           使用 Github 登录
         </div>
         <div className={styles.loginPrivacy}>
@@ -113,4 +117,4 @@ const Login = (props: IProps) => {
   ) : null;
 };
 
-export default Login;
+export default observer(Login);
