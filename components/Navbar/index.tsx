@@ -16,10 +16,13 @@ const Navbar: NextPage = () => {
   console.log(store.user.userInfo, '55');
 
   const { userId, avatar } = store.user.userInfo;
-  const { pathname } = useRouter();
+  const { pathname,push } = useRouter();
   const [isShowLogin, setIsShowLogin] = useState(false);
   console.log(pathname);
-  const handleGotoEditorPage = () => {};
+  const handleGotoEditorPage = () => {
+    push(`/editor/new`)
+
+  };
   const handleLogin = () => {
     setIsShowLogin(true);
   };
@@ -28,7 +31,9 @@ const Navbar: NextPage = () => {
     setIsShowLogin(false);
   };
 
-  const handleGotoPersonalPage = () => {};
+  const handleGotoPersonalPage = () => {
+    push(`/user/${userId}`)
+  };
 
   const handleLogout = () => {
     request.post('/api/user/logout').then((res: any) => {
