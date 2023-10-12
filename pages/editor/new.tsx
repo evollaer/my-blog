@@ -3,20 +3,48 @@ import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { Input, Button } from 'antd';
+import { useRouter } from 'next/router';
+import { Input, Button, message } from 'antd';
 import styles from './index.module.scss';
+import request from 'service/fetch';
+import { observer } from 'mobx-react-lite';
+import { useStore } from 'store/index';
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 const NewEditor = () => {
+  const store = useStore()
+  const { push } = useRouter()
+  const { userId } = store.user.userInfo;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  const handlePublish = () => {};
+  const handlePublish = () => {
+    if (!title) {
+      message.warning('请输入文章标题')
+      return
+    }
+
+    request.post('/api/article/publish', {
+      title,
+      content
+    }).then((res: any) => {
+      if (res?.code === 0) {
+        message.success('发布成功')
+        userId ? push(`/user/${userId}`) : push('/')
+      } else {
+        message.error(res?.msg || '发布失败')
+      }
+    })
+  };
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
   };
+
+  const handleContentChange = (content: any) => {
+    setContent(content)
+  }
   return (
     <div className={styles.container}>
       <div className={styles.operation}>
@@ -26,12 +54,12 @@ const NewEditor = () => {
         </Button>
       </div>
       <div className={styles.editorContainer}>
-        <MDEditor value={content} height={'100%'} onChange={setContent} />
+        <MDEditor value={content} height={'100%'} onChange={handleContentChange} />
       </div>
     </div>
   );
 };
 
-NewEditor.layout = null;
+(NewEditor as any).layout = null;
 
-export default NewEditor;
+export default observer(NewEditor);
