@@ -1,4 +1,3 @@
-import type { NextPage } from 'next';
 import { prepareConnection } from 'db';
 import { Article } from 'db/entity'
 import { Divider } from 'antd'
@@ -14,7 +13,6 @@ export async function getServerSideProps() {
   const articles = await db.getRepository(Article).find({
     relations: ['user']
   })
-  console.log(4545, articles);
 
   return {
     props: {
@@ -26,7 +24,6 @@ export async function getServerSideProps() {
 
 const Home = (props: IProps) => {
   const { articles } = props
-  console.log(888, articles);
 
   return <div>
     <div className='content-layout'>

@@ -19,11 +19,11 @@ async function update(req: NextApiRequest, res: NextApiResponse) {
         where: {
             id:id
         },
-        relations: ['user']
+        relations: ['user','tags']
     })
 
     if (article) {
-        console.log(article);
+        console.log(777,article);
         
         article.title = title
         article.content = content

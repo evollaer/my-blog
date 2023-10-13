@@ -6,14 +6,18 @@
     .operation{
         display: flex;
         .title{
-            width: 80%;
+            width: 60%;
             padding: 10px;
+        }
+        .tag {
+            width: 20%;
+            margin-left: 5px;
         }
         button{
             width: 20%;
             height: 100%;
             font-size: 18px;
-            margin-left: 10px;
+            margin-left: 5px;
         }
     }
     .editorContainer{

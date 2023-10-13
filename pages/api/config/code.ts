@@ -1,6 +1,7 @@
 export const EXCEPTION_USER = {
-    PUBLISH_FAILED: {
-
+    NOT_LOGIN: {
+        code: 1001,
+        msg: '未登录'
     }
 }
 
@@ -16,5 +17,20 @@ export const EXCEPTION_ARTICLE = {
     NOT_FOUND: {
         code: 2003,
         msg: '未找到文章'
+    },
+}
+
+export const EXCEPTION_TAG = {
+    FOLLOW_FAILED: {
+        code: 3001,
+        msg: '关注/取关操作失败'
+    }
+}
+
+
+export const EXCEPTION_COMMENT = {
+    PUBLISH_FAILED: {
+        code: 4001,
+        msg: '发表失败'
     },
 }

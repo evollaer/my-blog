@@ -1,11 +1,10 @@
-import type { NextPage } from 'next';
 import { prepareConnection } from 'db/index'
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Input, Button, message } from 'antd';
+import { Input, Button, message, Select } from 'antd';
 import styles from './index.module.scss';
 import request from 'service/fetch';
 import { observer } from 'mobx-react-lite';
@@ -43,11 +42,21 @@ export async function getServerSideProps({ params }: any) {
 const ModifyEditor = ({ article }: IProps) => {
     const store = useStore()
     const { push, query } = useRouter()
-    const { userId } = store.user.userInfo;
     const articleId = Number(query?.id)
     const [title, setTitle] = useState(article?.title || '');
     const [content, setContent] = useState(article?.content || '');
+    const [tagIds, setTagIds] = useState([])
+    const [allTags, setAllTags] = useState([])
 
+    useEffect(() => {
+        request.get('/api/tag/get').then((res: any) => {
+            if (res.code === 0) {
+                console.log(res?.data?.allTags);
+
+                setAllTags(res?.data?.allTags || [])
+            }
+        })
+    }, [])
     const handlePublish = () => {
         if (!title) {
             message.warning('请输入文章标题')
@@ -57,7 +66,8 @@ const ModifyEditor = ({ article }: IProps) => {
         request.post('/api/article/update', {
             id: articleId,
             title,
-            content
+            content,
+            tagIds
         }).then((res: any) => {
             if (res?.code === 0) {
                 message.success('更新成功')
@@ -68,9 +78,14 @@ const ModifyEditor = ({ article }: IProps) => {
         })
     };
 
-    const handleTitleChange = (event) => {
+    const handleTitleChange = (event: any) => {
         setTitle(event.target.value);
     };
+
+    const handleSelect = (value: []) => {
+        setTagIds(value)
+    }
+
 
     const handleContentChange = (content: any) => {
         setContent(content)
@@ -79,6 +94,14 @@ const ModifyEditor = ({ article }: IProps) => {
         <div className={styles.container}>
             <div className={styles.operation}>
                 <Input className={styles.title} placeholder="请输入文章标题" value={title} onChange={handleTitleChange} />
+                <Select className={styles.tag} mode='multiple' allowClear placeholder='请选择标签' onChange={handleSelect}
+                    options={
+                        allTags?.map((tag: any) => {
+                            return { label: tag?.title, value: tag.id }
+                        })
+                    }
+                    size='large'
+                />
                 <Button type="primary" onClick={handlePublish}>
                     发布
                 </Button>

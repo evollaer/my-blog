@@ -1,10 +1,9 @@
-import type { NextPage } from 'next';
 import '@uiw/react-md-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Input, Button, message } from 'antd';
+import { Input, Button, message, Select } from 'antd';
 import styles from './index.module.scss';
 import request from 'service/fetch';
 import { observer } from 'mobx-react-lite';
@@ -18,6 +17,18 @@ const NewEditor = () => {
   const { userId } = store.user.userInfo;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [tagIds, setTagIds] = useState([])
+  const [allTags, setAllTags] = useState([])
+
+  useEffect(() => {
+    request.get('/api/tag/get').then((res: any) => {
+      if (res.code === 0) {
+        console.log(res?.data?.allTags);
+
+        setAllTags(res?.data?.allTags || [])
+      }
+    })
+  }, [])
 
   const handlePublish = () => {
     if (!title) {
@@ -27,7 +38,8 @@ const NewEditor = () => {
 
     request.post('/api/article/publish', {
       title,
-      content
+      content,
+      tagIds
     }).then((res: any) => {
       if (res?.code === 0) {
         message.success('发布成功')
@@ -38,9 +50,13 @@ const NewEditor = () => {
     })
   };
 
-  const handleTitleChange = (event) => {
+  const handleTitleChange = (event: any) => {
     setTitle(event.target.value);
   };
+
+  const handleSelect = (value: []) => {
+    setTagIds(value)
+  }
 
   const handleContentChange = (content: any) => {
     setContent(content)
@@ -49,6 +65,14 @@ const NewEditor = () => {
     <div className={styles.container}>
       <div className={styles.operation}>
         <Input className={styles.title} placeholder="请输入文章标题" value={title} onChange={handleTitleChange} />
+        <Select className={styles.tag} mode='multiple' allowClear placeholder='请选择标签' onChange={handleSelect}
+          options={
+            allTags?.map((tag: any) => {
+              return { label: tag?.title, value: tag.id }
+            })
+          }
+          size='large'
+        />
         <Button type="primary" onClick={handlePublish}>
           发布
         </Button>
