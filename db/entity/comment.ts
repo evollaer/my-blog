@@ -1,6 +1,6 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from './user';
 import { Article } from './article';
+import { User } from './user';
 
 @Entity({ name: 'comments' })
 export class Comment extends BaseEntity {

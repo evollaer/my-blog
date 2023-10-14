@@ -19,7 +19,6 @@ interface IProps {
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 export async function getServerSideProps({ params }: any) {
-    console.log(222);
     // console.log(params);//{ id: '1' },也就是这条信息的id
 
     const articleId = params?.id;
@@ -29,7 +28,7 @@ export async function getServerSideProps({ params }: any) {
         where: {
             id: articleId
         },
-        relations: ['user']
+        relations: ['user','tags']
     })
 
     return {
@@ -40,6 +39,8 @@ export async function getServerSideProps({ params }: any) {
 
 }
 const ModifyEditor = ({ article }: IProps) => {
+    
+    
     const store = useStore()
     const { push, query } = useRouter()
     const articleId = Number(query?.id)
@@ -47,9 +48,10 @@ const ModifyEditor = ({ article }: IProps) => {
     const [content, setContent] = useState(article?.content || '');
     const [tagIds, setTagIds] = useState([])
     const [allTags, setAllTags] = useState([])
-
+    console.log(article);
+    
     useEffect(() => {
-        request.get('/api/tag/get').then((res: any) => {
+        request('/api/tag/get').then((res: any) => {
             if (res.code === 0) {
                 console.log(res?.data?.allTags);
 
@@ -57,6 +59,16 @@ const ModifyEditor = ({ article }: IProps) => {
             }
         })
     }, [])
+    useEffect(()=>{
+        if (article?.tags.length) {
+            let tags=article?.tags.map(item=>{
+                return item.id
+            })
+            console.log(tags);
+            setTagIds(tags||[])
+        }
+
+    },[allTags])
     const handlePublish = () => {
         if (!title) {
             message.warning('请输入文章标题')

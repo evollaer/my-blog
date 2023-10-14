@@ -24,7 +24,6 @@ async function sendVerifyCode(req: NextApiRequest, res: NextApiResponse) {
 
   const url = `https://app.cloopen.com:8883/2013-12-26/Accounts/${AccountId}/SMS/TemplateSMS?sig=${SigParameter}`;
 
-  console.log(222, to, templateId);
   console.log(SigParameter);
   console.log(Authorization, verifyCode);
 

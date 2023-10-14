@@ -16,7 +16,6 @@ interface IProps {
 }
 
 export async function getServerSideProps({ params }: any) {
-    console.log(222);
     // console.log(params);//{ id: '1' },也就是这条信息的id
 
     const articleId = params?.id;

@@ -11,8 +11,13 @@ const database = process.env.DATABASE_NAME;
 
 let connectionReadyPromise: Promise<Connection> | null = null;
 
-export const prepareConnection = () => {
-    if (!connectionReadyPromise) {
+export const prepareConnection = async () => {
+    let result = true
+    let res = await connectionReadyPromise
+    result = res?.isConnected || false//有时候非初次打开页面时isConnected为false，需要重新建立
+    if (!connectionReadyPromise || !result) {
+        console.log('初次执行/isConnect=false', 111);
+
         connectionReadyPromise = (async () => {
             try {
                 const staleConnection = getConnection();

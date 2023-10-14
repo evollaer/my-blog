@@ -17,7 +17,6 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
     const session: ISession = req.session
     const cookies = Cookie.fromApiRoute(req, res)
     const { phone = '', verify = '', identity_type = 'phone' } = req.body;
-    console.log('222', phone, verify);
 
     const db = await prepareConnection();
 
