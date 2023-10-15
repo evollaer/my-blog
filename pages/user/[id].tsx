@@ -12,6 +12,7 @@ import ListItem from 'components/ListItem';
 import { prepareConnection } from 'db/index';
 import { User, Article } from 'db/entity';
 import styles from './index.module.scss';
+import { useStore } from 'store/index';
 
 export async function getStaticPaths() {
   // user/[id]
@@ -83,6 +84,9 @@ const UserDetail = (props: any) => {
     0
   );
 
+  const store = useStore()
+  const loginUserInfo = store?.user?.userInfo
+
   return (
     <div className={styles.userDetail}>
       <div className={styles.left}>
@@ -97,9 +101,13 @@ const UserDetail = (props: any) => {
               <FireOutlined /> {userInfo?.introduce}
             </div>
           </div>
-          <Link href="/user/profile">
-            <Button>编辑个人资料</Button>
-          </Link>
+          {
+            Number(loginUserInfo?.userId) === Number(userInfo?.id) && (
+              <Link href="/user/profile">
+                <Button>编辑个人资料</Button>
+              </Link>
+            )
+          }
         </div>
         <Divider />
         <div className={styles.article}>

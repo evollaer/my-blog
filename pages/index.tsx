@@ -38,6 +38,8 @@ export async function getServerSideProps() {
 
 const Home = (props: IProps) => {
   const { articles, tags } = props
+  console.log(tags,'tags');
+  
   const [selectTag, setSelectTag] = useState(0)
   const [showArticles,setShowArticles] = useState([...articles])
   
